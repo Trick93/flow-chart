@@ -62,17 +62,24 @@ function FlowAreaBox() {
           enableDelegate: false,
           selectedState: 'nodeSelected',
           shouldBegin: (e: IG6GraphEvent) => {
-            return !['anchor', 'banAnchor'].some(
-              (item) => item === e.target.get('className')
-            )
+            // 事件触发在锚点上 不触发拖拽
+            return !(e.target.get('name') === 'anchor-point')
           },
         },
+        {
+          type: 'create-edge',
+          trigger: 'drag',
+          shouldBegin: (e: IG6GraphEvent) => {
+            console.log(e.target)
+            return true
+          },
+        }
       ],
       'default'
     )
 
     return () => {
-      graph.current?.removeBehaviors(['drag-add-node', 'drag-node'], 'default')
+      graph.current?.removeBehaviors(['drag-add-node', 'drag-node', 'drag-node', 'create-edge'], 'default')
     }
   }, [])
 
