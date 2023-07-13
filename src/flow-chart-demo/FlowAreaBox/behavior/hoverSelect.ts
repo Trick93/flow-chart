@@ -1,0 +1,84 @@
+// G6自定义行为 - 节点以及边的选择高亮样式
+import type { IEdge, INode, IG6GraphEvent, BehaviorOption } from '@antv/g6'
+
+const hoverSelectBehavior: BehaviorOption = {
+
+  // 清除掉当前节点和边的所有状态
+  _removeAllState() {
+    this.graph.setAutoPaint(false)
+    this.graph.getNodes().forEach((node: INode) => this.graph.clearItemStates(node, ['nodeSelected']))
+    this.graph.getEdges().forEach((edge: IEdge) => this.graph.clearItemStates(edge))
+    this.graph.paint()
+    this.graph.setAutoPaint(true)
+  },
+
+  getEvents() {
+    return {
+      'node:mouseenter': 'onNodeMouseenter',
+      'node:mouseleave': 'onNodeMouseleave',
+      'node:click': 'onNodeClick',
+      'edge:mouseenter': 'onEdgeMouseenter',
+      'edge:mouseleave': 'onEdgeMouseleave',
+      'edge:click': 'onEdgeClick',
+      'canvas:click': 'onCanvasClick',
+    }
+  },
+
+  onNodeMouseenter(evt: IG6GraphEvent) {
+    const nodeItem = evt.item // 获取鼠标进入的节点元素对象
+    // 展示四个锚点
+    nodeItem?.update({
+      linkPoints: {
+        top: true,
+        right: true,
+        bottom: true,
+        left: true,
+      },
+    })
+  },
+
+  onNodeMouseleave(evt: IG6GraphEvent) {
+    const nodeItem = evt.item // 获取鼠标离开的节点元素对象
+    // 取消四个锚点
+    nodeItem?.update({
+      linkPoints: {
+        top: false,
+        right: false,
+        bottom: false,
+        left: false,
+      },
+    })
+  },
+
+  onNodeClick(evt: IG6GraphEvent) {
+    // 鼠标点击节点
+    // 先将 节点和边 的状态重置
+    this._removeAllState()
+    const nodeItem = evt.item
+    this.graph.setItemState(nodeItem, 'nodeSelected', true) // 设置当前节点的 actived 状态为 true
+  },
+
+  onEdgeMouseenter(evt: IG6GraphEvent) {
+    const edgeItem = evt.item // 获取鼠标进入的节点元素对象
+    this.graph.setItemState(edgeItem, 'edgeHover', true) // 设置当前边的 hover 状态为 true
+  },
+
+  onEdgeMouseleave(evt: IG6GraphEvent) {
+    const edgeItem = evt.item // 获取鼠标离开的节点元素对象
+    this.graph.setItemState(edgeItem, 'edgeHover', false) // 设置当前边的 hover 状态为 false
+  },
+
+  onEdgeClick(evt: IG6GraphEvent) {
+    // 先将 节点和边 的状态重置
+    this._removeAllState()
+    const edgeItem = evt.item // 获取鼠标离开的边元素对象
+    this.graph.setItemState(edgeItem, 'edgeSelected', true) // 设置当前边的 active 状态为 true
+  },
+
+  onCanvasClick() {
+    // 先将 节点和边 的状态重置
+    this._removeAllState()
+  },
+}
+
+export default hoverSelectBehavior
