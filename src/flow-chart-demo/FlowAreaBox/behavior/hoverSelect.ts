@@ -21,6 +21,10 @@ const hoverSelectBehavior: ExtendBehaviorOption = {
     return {
       'node:mouseenter': 'onNodeMouseenter',
       'node:mouseleave': 'onNodeMouseleave',
+      'node:dragenter': 'onNodeMouseenter',
+      'node:dragleave': 'onNodeMouseleave',
+      'node:dragstart': 'onNodeMouseenter',
+      'node:dragout': 'onNodeMouseleave',
       'node:click': 'onNodeClick',
       'edge:mouseenter': 'onEdgeMouseenter',
       'edge:mouseleave': 'onEdgeMouseleave',
@@ -32,28 +36,12 @@ const hoverSelectBehavior: ExtendBehaviorOption = {
   onNodeMouseenter(evt: IG6GraphEvent) {
     const nodeItem = evt.item // 获取鼠标进入的节点元素对象
     // 展示四个锚点
-    // nodeItem?.update({
-    //   linkPoints: {
-    //     top: true,
-    //     right: true,
-    //     bottom: true,
-    //     left: true,
-    //   },
-    // })
     this.graph?.setItemState(nodeItem as Item, 'showAnchors', true)
   },
 
   onNodeMouseleave(evt: IG6GraphEvent) {
     const nodeItem = evt.item // 获取鼠标离开的节点元素对象
     // 取消四个锚点
-    // nodeItem?.update({
-    //   linkPoints: {
-    //     top: false,
-    //     right: false,
-    //     bottom: false,
-    //     left: false,
-    //   },
-    // })
     this.graph?.setItemState(nodeItem as Item, 'showAnchors', false)
   },
 
