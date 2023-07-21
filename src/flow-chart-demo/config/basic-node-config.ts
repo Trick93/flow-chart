@@ -7,8 +7,7 @@ export const commonNodes = [
     name: '开始节点',
     color: '#e6f7ff',
     borderColor: '#69c0ff',
-    shapeType: 'circle',
-    size: 45,
+    shapeType: 'rect-node',
   },
   {
     node_type: 2,
@@ -16,8 +15,7 @@ export const commonNodes = [
     name: '结束节点',
     color: '#e6f7ff',
     borderColor: '#69c0ff',
-    shapeType: 'circle',
-    size: 45,
+    shapeType: 'rect-node',
   },
   {
     node_type: 3,
@@ -58,7 +56,6 @@ export const formatNodeStyle = (nodeType: number | string) => {
   const target = commonNodes.find((item) => item.node_type === +nodeType)
   return {
     type: target?.shapeType,
-    size: target?.size,
     style: {
       fill: target?.color || '#EFF4FF',
       cursor: 'move',

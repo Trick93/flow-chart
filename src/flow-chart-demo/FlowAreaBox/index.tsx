@@ -4,13 +4,16 @@ import G6 from '@antv/g6'
 import './behavior' // 引入自定义的 behaviors
 import FlowChart from '../../components/FlowChart'
 
+// 插件
+import snaplinePlugin from './plugins/snaplinePlugin'
+import minimapPlugin from './plugins/minimapPlugin'
 
 import type { Graph, GraphOptions, IG6GraphEvent, Item } from '@antv/g6'
 
 // 用户自定义配置
 // 可以参考 https://g6.antv.antgroup.com/api/graph
 const userConfig: Omit<GraphOptions, "container"> = {
-  plugins: [new G6.Grid()],
+  plugins: [new G6.Grid(), snaplinePlugin],
   nodeStateStyles: {
     selected: {
       lineWidth: 2,
@@ -51,7 +54,7 @@ const userConfig: Omit<GraphOptions, "container"> = {
 function FlowAreaBox() {
   const graph = useRef<Graph>(null) // ref 利用ref存放当前图表实例 
 
-  let sourceAnchorIdx: number | undefined, targetAnchorIdx: number | undefined;
+  let sourceAnchorIdx: number | undefined, targetAnchorIdx: number | undefined
 
   useEffect(() => {
     // 为图表添加行为
@@ -87,14 +90,18 @@ function FlowAreaBox() {
             targetAnchorIdx = undefined
             return true
           }
-        }
+        },
+        {
+          type: 'brush-select',
+          includeEdges: false,
+          selectedState: 'nodeSelected',
+        },
       ],
       'default'
     )
 
     // 监听创建边事件 更新连线的起终点
     graph.current?.on('aftercreateedge', (e) => {
-      console.log('aftercreateedge', e)
       graph.current?.updateItem((e.edge as Item), {
         sourceAnchor: sourceAnchorIdx,
         targetAnchor: targetAnchorIdx
@@ -102,7 +109,6 @@ function FlowAreaBox() {
     })
 
     graph.current?.on('afteradditem', (e) => {
-      console.log('afteradditem', e)
       if (e.item && e.item.getType() === 'edge') {
         graph.current?.updateItem(e.item, {
           sourceAnchor: sourceAnchorIdx
@@ -110,25 +116,9 @@ function FlowAreaBox() {
       }
     })
 
-    // 取消创建连线 需要将锚点的 links 重置下
-    graph.current?.on('afterremoveitem', (e: any) => {
-      if (e.item && e.item.source && e.item.target) {
-        const sourceNode = graph.current?.findById(e.item.source);
-        const targetNode = graph.current?.findById(e.item.target);
-        const { sourceAnchor, targetAnchor } = e.item;
-        if (sourceNode && !isNaN(sourceAnchor)) {
-          const sourceAnchorShape = sourceNode.getContainer().find(ele => (ele.get('name') === 'anchor-point' && ele.get('anchorPointIdx') === sourceAnchor));
-          sourceAnchorShape.set('links', sourceAnchorShape.get('links') - 1);
-        }
-        if (targetNode && !isNaN(targetAnchor)) {
-          const targetAnchorShape = targetNode.getContainer().find(ele => (ele.get('name') === 'anchor-point' && ele.get('anchorPointIdx') === targetAnchor));
-          targetAnchorShape.set('links', targetAnchorShape.get('links') - 1);
-        }
-      }
-    })
-
     return () => {
       graph.current?.removeBehaviors(['drag-add-node', 'hover-select', 'drag-node', 'create-edge'], 'default')
+      graph.current?.off()
     }
   }, [])
 

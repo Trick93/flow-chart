@@ -70,7 +70,7 @@ G6.registerNode(
       if (name === 'showAnchors') {
         const anchorPoints = item?.getContainer().findAll(ele => ele.get('name') === 'anchor-point')
         anchorPoints?.forEach(point => {
-          if (value || point.get('links') > 0) point.show()
+          if (value) point.show()
           else point.hide()
         })
       }
