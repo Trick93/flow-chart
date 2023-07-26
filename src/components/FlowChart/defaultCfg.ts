@@ -49,7 +49,8 @@ export const chartDefaultCfg = {
         cursor: 'pointer',
         background: {
           fill: '#ffffff',
-          padding: [3, 8, 3, 0],
+          stroke: '#9EC9FF',
+          padding: [3, 5, 3, 5],
           radius: 2,
         },
       },
