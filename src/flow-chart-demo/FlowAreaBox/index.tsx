@@ -1,8 +1,10 @@
 import {useRef, useEffect} from 'react'
 import G6 from '@antv/g6'
 
+import useFlow from '../model/useFlow'
 import './behavior' // 引入自定义的 behaviors
 import FlowChart from '../../components/FlowChart'
+import OperationManager from '../config/operationManager'
 
 // 插件
 import snaplinePlugin from './plugins/snaplinePlugin'
@@ -13,7 +15,7 @@ import type { Graph, GraphOptions, IG6GraphEvent, Item } from '@antv/g6'
 // 用户自定义配置
 // 可以参考 https://g6.antv.antgroup.com/api/graph
 const userConfig: Omit<GraphOptions, "container"> = {
-  plugins: [new G6.Grid(), snaplinePlugin],
+  plugins: [new G6.Grid(), snaplinePlugin, minimapPlugin],
   nodeStateStyles: {
     selected: {
       lineWidth: 2,
@@ -53,7 +55,9 @@ const userConfig: Omit<GraphOptions, "container"> = {
 
 function FlowAreaBox() {
   const graph = useRef<Graph>(null) // ref 利用ref存放当前图表实例 
+  const [useFlowStore] = useFlow
 
+  const { setCurrentItem } = useFlowStore()
   let sourceAnchorIdx: number | undefined, targetAnchorIdx: number | undefined
 
   useEffect(() => {
@@ -116,9 +120,24 @@ function FlowAreaBox() {
       }
     })
 
+    // 监听点击事件 存放当前选中的元素
+    graph.current?.on('click', (e) => {
+      if (e.target?.isCanvas?.()) {
+        setCurrentItem({targetType: 'canvas'})
+      } else {
+        const itemType = e.item?.getType()
+        setCurrentItem({targetType: itemType, ...e.item?.getModel()})
+      }
+    })
+
+    // 初始化图表管理类
+    OperationManager.init(graph.current)
+
     return () => {
       graph.current?.removeBehaviors(['drag-add-node', 'hover-select', 'drag-node', 'create-edge'], 'default')
-      graph.current?.off()
+      graph.current?.off('aftercreateedge')
+      graph.current?.off('afteradditem')
+      graph.current?.off('click')
     }
   }, [])
 

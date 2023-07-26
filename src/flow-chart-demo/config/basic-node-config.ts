@@ -66,6 +66,12 @@ export const formatNodeStyle = (nodeType: number | string) => {
       shadowBlur: 10,
     },
     nodeTypeName: target?.name,
-    node_type: nodeType,
+    nodeType: nodeType,
   }
+}
+
+// 寻找某个节点的配置
+export const findNodeProp = (type: string | number, key: 'name') => {
+  const target = commonNodes.find((item) => item.node_type === +type)
+  return target ? target?.[key] : ''
 }

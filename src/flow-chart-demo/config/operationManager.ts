@@ -7,7 +7,7 @@ class OperationManager {
     this.graph = null
   }
 
-  init(graph: Graph) {
+  init(graph: Graph | null) {
     this.graph = graph
   }
 
