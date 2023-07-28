@@ -1,8 +1,10 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Form, Typography, Divider, Input, Space, Button, Select } from 'antd'
+import { Form, Typography, Divider, Input, Space, Button, Select, Card } from 'antd'
 import useFlow from '../model/useFlow'
 import { WithNodeDetailForm, NodeType1, NodeType2, NodeType3 } from './NodeDetail'
 import OperationManager from '../config/operationManager'
+
+import type { EdgeConfig } from '@antv/g6'
 
 const { Title } = Typography
 
@@ -32,17 +34,35 @@ const PanelEdgeDetail = ({detail}: {detail: any}) => {
     }
   }, [detail])
 
-  // 获取画布当前所有节点
-  const allNodes = useMemo<any>(() => {
-    const data = OperationManager.graph?.save()
-    return data?.nodes
+  // 获取画布当前所有的数据项
+  const allItems = useMemo<any>(() => {
+    return OperationManager.graph?.save()
   }, [])
 
   const handleFormSubmit = () => {
     form.validateFields().then(values => {
       const { label, source, target } = values
       OperationManager.graph?.updateItem(detail.id, { label, source, target })
+      handleClickEdge(detail.id)
     })
+  }
+
+  // 点击连线列表
+  const handleClickEdge = (id:string|undefined) => {
+    if (!id) return
+    const target = OperationManager.graph?.findById(id)
+    if (target) {
+      OperationManager.graph?.emit('click', {
+        item: target,
+      })
+      OperationManager.graph?.emit('edge:click', {
+        item: target,
+      })
+      OperationManager.graph?.focusItem(target, true, {
+        easing: 'easeCubic',
+        duration: 400,
+      })
+    }
   }
 
   return (
@@ -70,16 +90,30 @@ const PanelEdgeDetail = ({detail}: {detail: any}) => {
             <Form.Item
               label='连线起点'
               name="source"
-
+              required
             >
-              <Select options={allNodes} fieldNames={{label: 'label', value: 'id'}}></Select>
+              <Select
+                showSearch
+                options={allItems.nodes}
+                fieldNames={{label: 'label', value: 'id'}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as String).toLowerCase().includes(input.toLowerCase())
+                }>
+              </Select>
             </Form.Item>
             <Form.Item
               label='连线终点'
               name="target"
-  
+              required
             >
-              <Select options={allNodes} fieldNames={{label: 'label', value: 'id'}}></Select>
+              <Select
+                showSearch
+                options={allItems.nodes} 
+                fieldNames={{label: 'label', value: 'id'}}
+                filterOption={(input, option) =>
+                  ((option?.label ?? '') as String).toLowerCase().includes(input.toLowerCase())
+                }>
+              </Select>
             </Form.Item>
           </div>
         </Form.Item>
@@ -91,6 +125,17 @@ const PanelEdgeDetail = ({detail}: {detail: any}) => {
           </Space>
         </Form.Item>
       </Form>
+      <div>
+        <ul className="list-none p-0">
+        {
+          allItems.edges.map((item: EdgeConfig, idx:number) => (
+            <li onClick={() => handleClickEdge(item.id)} className={`h-[38px] leading-[38px] px-2 border-dashed border-0 border-b-[1px] border-[#ddd] cursor-pointer hover:bg-[#e6f4ff] transition-all ${detail.id === item.id ? 'bg-[#e6f4ff]' : ''}`} key={item.id}>
+              {idx+1}: {item.label ?? ''}
+            </li>
+          ))
+        }
+        </ul>
+      </div>
     </div>
   )
 }

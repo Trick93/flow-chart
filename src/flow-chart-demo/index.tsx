@@ -12,13 +12,13 @@ function FlowChartDemo() {
   return (
     <FlowStoreProvider>
       <Layout className="h-screen">
-        <Sider theme="light" width={180} className="bg-[#f7f9fb] border-r border-[#e6e9ed]">
+        <Sider theme="light" width={180} className="bg-[#f7f9fb] border-0 border-solid border-r border-[#e6e9ed]">
           <NodeToolBox />
         </Sider>
         <Content className="bg-[#fefcfe] relative z-10">
           <FlowAreaBox />
         </Content>
-        <Sider theme="light" width={350} className="bg-[#f7f9fb] border-l border-[#e6e9ed]">
+        <Sider theme="light" width={350} className="bg-[#f7f9fb] border-0 border-solid border-l border-[#e6e9ed]">
           <DetailBox />
         </Sider>
       </Layout>
