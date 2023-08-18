@@ -3,6 +3,7 @@ import { Form, Typography, Divider, Input, Space, Button, Select, Card } from 'a
 import useFlow from '../model/useFlow'
 import { WithNodeDetailForm, NodeType1, NodeType2, NodeType3 } from './NodeDetail'
 import OperationManager from '../config/operationManager'
+import ReactJson from 'react-json-view'
 
 import type { EdgeConfig } from '@antv/g6'
 
@@ -141,7 +142,13 @@ const PanelEdgeDetail = ({detail}: {detail: any}) => {
 }
 
 const PanelFlowDetail = () => {
-  return '这是面板详情信息'
+  const datas = OperationManager.graph?.save()
+  return <div className="p-3"><ReactJson
+    name={false}
+    displayDataTypes={false}
+    collapsed={1}
+    src={datas ?? {}}
+  /></div>
 }
 
 function DetailBox() {
