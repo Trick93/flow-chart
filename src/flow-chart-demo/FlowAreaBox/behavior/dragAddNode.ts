@@ -15,7 +15,7 @@ const dragAddNodeBehavior = {
     }
     const addNodeType = evt.originalEvent.dataTransfer.getData('nodeInfo')
     const addNodeName = evt.originalEvent.dataTransfer.getData('nodeName')
-    const nodeId = 'temp' + String(Math.random() * Math.random() * 1000)
+    const nodeId = 'temp' + String(Math.floor(Math.random() * Math.random() * 1000))
     const addNodeModel = {
       x: evt.x,
       y: evt.y,

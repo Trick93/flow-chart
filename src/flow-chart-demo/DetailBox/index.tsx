@@ -164,7 +164,7 @@ function DetailBox() {
     setDetail(detail)
   }, [currentItem])
 
-  return <section>
+  return <section className='h-full'>
     { type === 'canvas' && <PanelFlowDetail /> }
     { type === 'node' && <PanelNodeDetail detail={detail} /> }
     { type === 'edge' && <PanelEdgeDetail detail={detail} /> }

@@ -4,6 +4,7 @@ import G6 from '@antv/g6'
 import useFlow from '../model/useFlow'
 import './behavior' // 引入自定义的 behaviors
 import FlowChart from '../../components/FlowChart'
+import ContextMenu from './ContextMenu' // 右键菜单
 import OperationManager from '../config/operationManager'
 
 // 插件
@@ -147,6 +148,7 @@ function FlowAreaBox() {
         graphRef={graph}
         config={userConfig}
       />
+      <ContextMenu />
     </div>
   )
 }
