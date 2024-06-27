@@ -11,13 +11,16 @@ import OperationManager from '../config/operationManager'
 import snaplinePlugin from './plugins/snaplinePlugin'
 import minimapPlugin from './plugins/minimapPlugin'
 import menuPlugin from './plugins/menuPlugin'
+import toolbarPlugin from './plugins/toolbarPlugin'
 
 import type { Graph, GraphOptions, IG6GraphEvent, Item } from '@antv/g6'
 
 // 用户自定义配置
 // 可以参考 https://g6.antv.antgroup.com/api/graph
 const userConfig: Omit<GraphOptions, "container"> = {
-  plugins: [new G6.Grid(), snaplinePlugin, minimapPlugin, menuPlugin],
+  plugins: [new G6.Grid(), snaplinePlugin, minimapPlugin, menuPlugin, toolbarPlugin],
+  enabledStack: true,
+  maxStep: 20,
   nodeStateStyles: {
     selected: {
       lineWidth: 2,
@@ -132,6 +135,13 @@ function FlowAreaBox() {
       }
     })
 
+    graph.current?.on('stackchange', (data) => {
+      if (data.action === 'update') {
+        // 为了解决创建边的时候 多了几个update步骤
+        graph.current?.getUndoStack().pop()
+      }
+    })
+
     // 初始化图表管理类
     OperationManager.init(graph.current)
 
@@ -140,6 +150,7 @@ function FlowAreaBox() {
       graph.current?.off('aftercreateedge')
       graph.current?.off('afteradditem')
       graph.current?.off('click')
+      graph.current?.off('stackchange')
     }
   }, [])
 

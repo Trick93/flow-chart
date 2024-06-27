@@ -29,6 +29,9 @@ const menuPlugin = new G6.Menu({
     if (menuKey === '6') {
       OperationManager.graph?.fitView(20)
     }
+    if (menuKey === '4') {
+      OperationManager.graph?.removeItem(item)
+    }
   },
 })
 
