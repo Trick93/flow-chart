@@ -11,7 +11,7 @@ pnpm dev
 
 # 演示截图
 
-![演示图片](./docs//1.png)
+![演示图片](./docs//show.gif)
 
 # Feature
 
