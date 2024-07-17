@@ -5,14 +5,28 @@ import NodeToolBox from './NodeToolBox'
 
 import useFlow from './model/useFlow'
 import useDragResize from '../hooks/useDragResize'
+import useSocketState from '../hooks/useSocketState'
+import { useEffect } from 'react'
+
+import { useParams } from 'react-router-dom'
 
 const { Sider, Content } = Layout
 
 function FlowChartDemo() {
   const [_, FlowStoreProvider] = useFlow
-  
+  const { socketState, socket } = useSocketState()
+  const params = useParams()
 
   const { boxRef, DragHandler } = useDragResize({direction: 'vertical', maxWidth: 1400, minWidth: 350})
+
+  useEffect(() => {
+    if (socketState) {
+      socket.emit('join', { id: params.flowId })
+    }
+    return () => {
+      socket.emit('leave', { id: params.flowId })
+    }
+  }, [socketState])
 
   return (
     <FlowStoreProvider>

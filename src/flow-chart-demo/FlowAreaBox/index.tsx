@@ -71,6 +71,7 @@ function FlowAreaBox() {
       [
         'drag-add-node',
         'hover-select',
+        'socket',
         {
           type: 'drag-node',
           enableDelegate: false,
